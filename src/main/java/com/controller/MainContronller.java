@@ -1,5 +1,8 @@
 package com.controller;
 
+import java.util.HashMap;
+import java.util.Iterator;
+
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,11 +15,16 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.model.Cart;
 import com.model.Favorite;
+import com.model.Order;
+import com.model.OrderDetail;
 import com.model.Product;
 import com.model.User;
 import com.repository.CategoryRepository;
 import com.repository.FavoriteRepository;
+import com.repository.OrderDetailRepository;
+import com.repository.OrderRepository;
 import com.repository.ProductRepository;
 import com.repository.UserRepository;
 
@@ -29,8 +37,12 @@ public class MainContronller {
 	private ProductRepository productRepository;
 	@Autowired
 	private UserRepository userRepository;
-//	@Autowired
-//	private FavoriteRepository favoriteRepository;
+	@Autowired
+	private FavoriteRepository favoriteRepository;
+	@Autowired
+	private OrderRepository orderRepository;
+	@Autowired
+	private OrderDetailRepository orderDetailRepository;
 	@GetMapping("")
 	public String index(Model model) {
 		model.addAttribute("cate", categoryRepository.findAll());
@@ -97,7 +109,19 @@ public class MainContronller {
 	}
 	
 	@PostMapping("/checkout")
-	public String order() {
+	public String order(Order order, HttpSession session) {
+		User user= (User)session.getAttribute("user");
+		order.setUser(user);
+		order= orderRepository.saveAndFlush(order);
+		HashMap<Long, Cart> cartItems = (HashMap<Long, Cart>) session.getAttribute("myCartItems");
+		for (int i = 0; i < cartItems.size(); i++) {
+			Cart item=cartItems.get(i);
+			OrderDetail orderDetail=new OrderDetail();
+			orderDetail.setOrder(order);
+			orderDetail.setProductID(item.getProduct().getId());
+			orderDetail.setQuantity(item.getQuantity());
+			orderDetailRepository.save(orderDetail);
+		}
 		
 		return null;
 	}
@@ -107,14 +131,14 @@ public class MainContronller {
 		model.addAttribute("pro", productRepository.findAll());
 		return "client/product-list";
 	}
-//	@GetMapping("/addFavorite")
-//	public String productlist(Product product, HttpSession session) {
-//		User user= (User)session.getAttribute("user");
-//		
-//		Favorite favorite=new Favorite();
-//		favorite.setProduct(product);
-//		favorite.setUser(user);
-//		favoriteRepository.save(favorite);
-//		return "client/product-list";
-//	}
+	@GetMapping("/addFavorite")
+	public String productlist(Product product, HttpSession session) {
+		User user= (User)session.getAttribute("user");
+		
+		Favorite favorite=new Favorite();
+		favorite.setProduct(product);
+		favorite.setUser(user);
+		favoriteRepository.save(favorite);
+		return "client/product-list";
+	}
 }

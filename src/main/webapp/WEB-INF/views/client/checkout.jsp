@@ -46,7 +46,7 @@
             <div class="col-12">
                 
                 <!-- Checkout Form s-->
-                <form:form action="" class="checkout-form" modelAttribute="user">
+                <form:form action="/checkout" class="checkout-form" modelAttribute="user">
                    <div class="row row-40">
                        
                        <div class="col-lg-7 mb-20">
@@ -108,7 +108,7 @@
                                
                                <!-- Payment Method -->
                                <div class="col-12 mb-60">
-                                   <button class="place-order">Place order</button>
+                                   <button type="submit" class="place-order">Place order</button>
                                </div>
                                
                            </div>

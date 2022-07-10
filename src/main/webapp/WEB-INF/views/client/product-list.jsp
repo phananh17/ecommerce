@@ -109,7 +109,9 @@
 
                                 <div class="wishlist-compare">
                                     <a href="#" data-tooltip="Compare"><i class="ti-control-shuffle"></i></a>
-                                    <a href="#" onclick="addFavorite(${p.id})" data-tooltip="Wishlist"><i class="ti-heart"></i></a>
+                                   <c:if test="${ sessionScope.user.username != null }">
+                                      <a href="#" onclick="addFavorite(${p.id})" data-tooltip="Wishlist"><i class="ti-heart"></i></a>
+</c:if>
                                 </div>
 
                                 <a href="/cart/add/${p.id}" class="add-to-cart"><i class="ti-shopping-cart"></i><span>ADD TO CART</span></a>
